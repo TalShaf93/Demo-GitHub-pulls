@@ -1,0 +1,44 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  pull_request:
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: HTTP Request Action
+        uses: fjogeleit/http-request-action@v1.8.1
+      
+      - name: Make Request
+        id: myRequest
+        uses: fjogeleit/http-request-action@master
+        with:
+          url: "https://api.github.com/repos/TalShaf93/Demo-GitHub-pulls/pulls?state=all"
+      - name: Show Response
+        run: echo ${{ steps.myRequest.outputs.response }}
+        
+      - name: Send Response to my api
+        id: newPull
+        uses: fjogeleit/http-request-action@master
+        with:
+          url: "https://api.github.com/repos/TalShaf93/Demo-GitHub-pulls/pulls?state=all"
+          method: 'POST'
+          data: ${{ steps.myRequest.outputs.response }}
+       
+        
+
